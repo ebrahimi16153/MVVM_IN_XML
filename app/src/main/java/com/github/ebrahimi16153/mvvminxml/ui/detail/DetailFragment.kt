@@ -1,60 +1,150 @@
 package com.github.ebrahimi16153.mvvminxml.ui.detail
 
+import android.content.Intent
+import android.content.Intent.ACTION_VIEW
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.ebrahimi16153.mvvminxml.R
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import coil.load
+import com.github.ebrahimi16153.mvvminxml.data.model.FoodList
+import com.github.ebrahimi16153.mvvminxml.databinding.FragmentDetailBinding
+import com.github.ebrahimi16153.mvvminxml.util.Wrapper
+import com.github.ebrahimi16153.mvvminxml.viewmodel.DetailViewModel
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class DetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+
+    //args
+    private val args: DetailFragmentArgs by navArgs()
+    private var foodID: String? = null
+
+    //viewmodel
+    private val detailViewModel: DetailViewModel by viewModels()
+
+    //binding
+    private var _binding: FragmentDetailBinding? = null
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail, container, false)
+        _binding = FragmentDetailBinding.inflate(layoutInflater)
+        return binding?.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        foodID = args.foodID
+        //call api
+
+        detailViewModel.detailFood(foodID!!)
+
+
+
+        binding?.apply {
+
+            // backBtm
+            backBtn.setOnClickListener { findNavController().navigateUp() }
+
+
+            //fill info
+            detailViewModel.detailFood.observe(viewLifecycleOwner) { itFood ->
+
+                when (itFood) {
+                    is Wrapper.Error -> {}
+                    Wrapper.Idle -> {}
+                    Wrapper.Loading -> {}
+                    is Wrapper.Success -> {
+                        fillContent(itFood.data)
+                    }
                 }
+
+
             }
+
+
+        }
+
+
     }
+
+    private fun fillContent(meal: FoodList.Meal) {
+
+        binding?.apply {
+
+            /////////////coverImage////////////////
+            coverImg.load(meal.strMealThumb)
+
+            ///////////Top Icon///////////////////
+            categoryDetail.text = meal.strCategory
+
+            areaDetail.text = meal.strArea
+
+            youtube.isVisible = meal.strYoutube != null
+
+            if (meal.strSource != null) {
+                sourceDetail.isVisible = true
+                sourceDetail.setOnClickListener {
+                    val intent = Intent(ACTION_VIEW)
+                    intent.setData(Uri.parse(meal.strSource))
+                    requireContext().startActivity(intent)
+                }
+            } else {
+                sourceDetail.isVisible = false
+            }
+
+            //TODO FAV FUN
+
+
+            //////////////FoodINFO////////////////////////
+
+            foodTitleTxt.text = meal.strMeal
+            foodDescTxt.text = meal.strInstructions
+
+            //////////////ingredients @ measure ////////////////////////////////////////
+
+            ingredientsTxt.text = meal.toIngredient()
+            measureTxt.text = meal.toMeasure()
+
+            ///////////////youtube player///////////////////////////////////////
+            youtubePlayer.apply {
+                viewLifecycleOwner.lifecycle.addObserver(this)
+
+
+                val youtubeKey = meal.youtubeKey()
+
+                addYouTubePlayerListener(object :AbstractYouTubePlayerListener(){
+                    override fun onReady(youTubePlayer: YouTubePlayer) {
+                        youtubeKey?.let { youTubePlayer.cueVideo(it, 0f) }
+
+                    }
+                })
+            }
+
+        }
+    }
+
+
+    override fun onStop() {
+        _binding = null
+        super.onStop()
+    }
+
 }
+

@@ -1,11 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
+
+    //for FragmentDirection
+
+
     namespace = "com.github.ebrahimi16153.mvvminxml"
     compileSdk = 34
 
@@ -57,8 +62,9 @@ dependencies {
 
 
     //Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.1")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.2")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.2")
+
     //Room components
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
@@ -91,5 +97,8 @@ dependencies {
 
     // image Animation
     implementation("com.flaviofaria:kenburnsview:1.0.7")
+
+    //youtube player
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
 
 }

@@ -1,7 +1,7 @@
 package com.github.ebrahimi16153.mvvminxml.data.remote
 
-import com.github.ebrahimi16153.foodapp.data.model.Categories
-import com.github.ebrahimi16153.foodapp.data.model.FoodList
+import com.github.ebrahimi16153.mvvminxml.data.model.Categories
+import com.github.ebrahimi16153.mvvminxml.data.model.FoodList
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

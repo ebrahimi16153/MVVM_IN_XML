@@ -1,4 +1,4 @@
-package com.github.ebrahimi16153.foodapp.data.model
+package com.github.ebrahimi16153.mvvminxml.data.model
 
 
 import com.google.gson.annotations.SerializedName

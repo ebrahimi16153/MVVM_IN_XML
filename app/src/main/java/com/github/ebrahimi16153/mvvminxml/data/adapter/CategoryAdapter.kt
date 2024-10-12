@@ -1,4 +1,4 @@
-package com.github.ebrahimi16153.foodapp.ui.home.adapter
+package com.github.ebrahimi16153.mvvminxml.data.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.github.ebrahimi16153.foodapp.data.model.Categories
+import com.github.ebrahimi16153.mvvminxml.data.model.Categories
 import com.github.ebrahimi16153.mvvminxml.R
 import com.github.ebrahimi16153.mvvminxml.databinding.ItemCategoriesBinding
 import javax.inject.Inject
@@ -19,7 +19,7 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = ItemCategoriesBinding.inflate(LayoutInflater.from(parent.context),parent,true)
+        binding = ItemCategoriesBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return ViewHolder()
     }
 

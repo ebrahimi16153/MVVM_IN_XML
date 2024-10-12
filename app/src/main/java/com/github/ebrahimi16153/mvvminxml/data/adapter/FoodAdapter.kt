@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.github.ebrahimi16153.foodapp.data.model.FoodList
+import com.github.ebrahimi16153.mvvminxml.data.model.FoodList
 import com.github.ebrahimi16153.mvvminxml.databinding.ItemFoodsBinding
 import javax.inject.Inject
 
