@@ -12,14 +12,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.github.ebrahimi16153.foodapp.ui.home.adapter.FoodAdapter
+import com.github.ebrahimi16153.mvvminxml.R
 import com.github.ebrahimi16153.mvvminxml.data.adapter.CategoryAdapter
 import com.github.ebrahimi16153.mvvminxml.databinding.FragmentHomeBinding
 import com.github.ebrahimi16153.mvvminxml.util.Wrapper
+import com.github.ebrahimi16153.mvvminxml.util.connection.CheckNetwork
+import com.github.ebrahimi16153.mvvminxml.util.connection.CheckNetworkImpl
 import com.github.ebrahimi16153.mvvminxml.util.setUpRecycler
 import com.github.ebrahimi16153.mvvminxml.util.setUpSpinner
 import com.github.ebrahimi16153.mvvminxml.viewmodel.HomeViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 
@@ -41,6 +45,7 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var foodAdapter: FoodAdapter
 
+    private var errorMessage:String? = null
 
 
     override fun onCreateView(
@@ -51,6 +56,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(layoutInflater)
 
         return binding?.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,24 +65,19 @@ class HomeFragment : Fragment() {
         val letters = listOf('A'..'Z').flatten().toMutableList()
 
 
-//        check connection
-
-
         ////////////////////////////call API//////////////////
         homeViewModel.getRandomFood()
         homeViewModel.getCategory()
 
         binding?.apply {
 
-             //randomFood
+            //randomFood
             homeViewModel.randomFood.observe(viewLifecycleOwner) { itFood ->
 
                 when (itFood) {
                     is Wrapper.Error -> {
-                        foodsLoading.isVisible = false
-                        Snackbar.make(root, itFood.message, Snackbar.LENGTH_LONG).show()
+                        errorMessage = itFood.message
                     }
-
                     Wrapper.Idle -> {}
                     Wrapper.Loading -> {
                         foodsLoading.isVisible = true
@@ -116,14 +117,10 @@ class HomeFragment : Fragment() {
 
                 when (itCategories) {
                     is Wrapper.Error -> {
-                        foodsLoading.isVisible = false
-                        Snackbar.make(root, itCategories.message, Snackbar.LENGTH_LONG)
-                            .show()
+                        errorMessage = itCategories.message
                     }
 
-                    Wrapper.Idle -> {
-
-                    }
+                    Wrapper.Idle -> {}
 
                     Wrapper.Loading -> {
                         foodsLoading.isVisible = true
@@ -158,14 +155,9 @@ class HomeFragment : Fragment() {
 
                 when (itFoods) {
                     is Wrapper.Error -> {
-                        foodsLoading.isVisible = false
-                        Snackbar.make(root, itFoods.message, Snackbar.LENGTH_LONG).show()
+                        errorMessage = itFoods.message
                     }
-
-                    Wrapper.Idle -> {
-
-                    }
-
+                    Wrapper.Idle -> {}
                     Wrapper.Loading -> {
                         foodsLoading.isVisible = true
                         homeContent.isVisible = false
@@ -199,7 +191,25 @@ class HomeFragment : Fragment() {
 
                     }
                 }
+            }
 
+            //Error
+
+
+            homeViewModel.errorStatus.observe(viewLifecycleOwner){
+                if (homeViewModel.foods.value is Wrapper.Error || homeViewModel.randomFood.value is Wrapper.Error || homeViewModel.categories.value is Wrapper.Error ){
+
+
+                    homeContent.isVisible = false
+                    disconnected.disconnectedIcon.setImageResource(R.drawable.error)
+                    disconnected.disconnectedText.text = errorMessage
+                    disconnectedLay.isVisible = true
+
+                }else{
+
+                    disconnectedLay.isVisible = false
+                    homeContent.isVisible = true
+                }
             }
         }
     }

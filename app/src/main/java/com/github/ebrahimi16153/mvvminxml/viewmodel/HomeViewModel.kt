@@ -7,6 +7,8 @@ import com.github.ebrahimi16153.mvvminxml.data.model.Categories
 import com.github.ebrahimi16153.mvvminxml.data.model.FoodList
 import com.github.ebrahimi16153.mvvminxml.data.repository.HomeRepository
 import com.github.ebrahimi16153.mvvminxml.util.Wrapper
+import com.github.ebrahimi16153.mvvminxml.util.connection.CheckNetwork
+import com.github.ebrahimi16153.mvvminxml.util.connection.CheckNetworkImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -16,12 +18,20 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository
+, private val network: CheckNetworkImpl) : ViewModel() {
 
 
     val randomFood = MutableLiveData<Wrapper<FoodList.Meal?>>(Wrapper.Loading)
     val categories = MutableLiveData<Wrapper<MutableList<Categories.Category>>>(Wrapper.Loading)
     val foods = MutableLiveData<Wrapper<MutableList<FoodList.Meal>>>(Wrapper.Loading)
+    val errorStatus = MutableLiveData<Boolean>()
+
+
+
+
+
 
 
     fun getRandomFood() = viewModelScope.launch {
@@ -30,9 +40,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             homeRepository.getRandomFood().collectLatest { itFood ->
 
                 randomFood.postValue(Wrapper.Success(data = itFood))
+                errorStatus.postValue(false)
             }
         } catch (e: Exception) {
             randomFood.postValue(Wrapper.Error(message = e.message.toString()))
+            errorStatus.postValue(true)
         }
     }
 
@@ -42,9 +54,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         try {
             homeRepository.searchFoods(searchQuery = searchQuery).debounce(300).collect{ itFoods ->
                 foods.postValue(Wrapper.Success(data = itFoods!!))
+                errorStatus.postValue(false)
             }
         }catch (e:Exception){
             foods.postValue(Wrapper.Error("search ERROR : "+e.message.toString()))
+            errorStatus.postValue(true)
         }
     }
 
@@ -54,9 +68,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             homeRepository.getCategory().collectLatest { itCategory ->
 
                 categories.postValue(Wrapper.Success(data = itCategory!!))
+                errorStatus.postValue(false)
             }
         } catch (e: Exception) {
             categories.postValue(Wrapper.Error(message = e.message.toString()))
+            errorStatus.postValue(true)
         }
     }
 
@@ -67,10 +83,12 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             homeRepository.getFoodByFirstLetter(letter = letter).collectLatest { itFoods ->
 
                 foods.postValue(Wrapper.Success(data = itFoods!!))
+                errorStatus.postValue(false)
 
             }
         } catch (e: Exception) {
             foods.postValue(Wrapper.Error(message = e.message.toString()))
+            errorStatus.postValue(true)
         }
 
 
@@ -82,9 +100,12 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         try {
             homeRepository.getFoodsByCategory(cat = cat).collect { itFoods ->
                 foods.postValue(Wrapper.Success(data = itFoods!!))
+                errorStatus.postValue(false)
             }
         } catch (e: Exception) {
+            e.stackTrace
             foods.postValue(Wrapper.Error(message = e.message.toString()))
+            errorStatus.postValue(true)
         }
     }
 

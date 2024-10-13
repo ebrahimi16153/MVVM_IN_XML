@@ -1,5 +1,6 @@
 package com.github.ebrahimi16153.mvvminxml.data.repository
 
+import android.util.Log
 import com.github.ebrahimi16153.mvvminxml.data.remote.ApiService
 import kotlinx.coroutines.flow.flow
 import java.net.UnknownHostException
@@ -40,12 +41,12 @@ class HomeRepository @Inject constructor(private val apiService: ApiService) {
                 }
             }
 
-        } catch (e:UnknownHostException){
-            throw UnknownHostException("Internet ERROR")
-        }
-        catch (e: Exception) {
-            e.stackTrace
-            throw Exception(e.message.toString())
+        } catch (_: UnknownHostException) {
+        } catch (e: Exception) {
+            if (e.message.toString() == "null")
+                throw Exception("Empty list")
+            else
+                throw Exception(e.message.toString())
         }
 
     }
@@ -83,11 +84,12 @@ class HomeRepository @Inject constructor(private val apiService: ApiService) {
             }
 
 
-        } catch (e:UnknownHostException){
-            throw UnknownHostException("Internet ERROR")
-        }
-        catch (e: Exception) {
-            throw Exception(e.message.toString())
+        } catch (_: UnknownHostException) {
+        } catch (e: Exception) {
+            if (e.message.toString() == "null")
+                throw Exception("Empty list")
+            else
+                throw Exception(e.message.toString())
         }
 
     }
@@ -124,11 +126,13 @@ class HomeRepository @Inject constructor(private val apiService: ApiService) {
                 }
             }
 
-        }catch (e:UnknownHostException){
-            throw UnknownHostException("Internet ERROR")
-        }
-        catch (e: Exception) {
-            throw Exception(e.message.toString())
+        } catch (_: UnknownHostException) {
+        } catch (e: Exception) {
+            if (e.message.toString() == "null")
+                throw Exception("Empty list")
+            else
+                throw Exception(e.message.toString())
+
         }
 
     }
@@ -162,19 +166,19 @@ class HomeRepository @Inject constructor(private val apiService: ApiService) {
                 }
 
             }
-        }catch (e:UnknownHostException){
-            throw UnknownHostException("Internet ERROR")
-        }
-        catch (e:Exception){
-            throw Exception(e.message)
+        } catch (_: UnknownHostException) {
+        } catch (e: Exception) {
+            if (e.message.toString() == "null")
+                throw Exception("Empty list")
+            else
+                throw Exception(e.message.toString())
         }
 
 
     }
 
 
-
-    suspend fun searchFoods(searchQuery:String) = flow{
+    suspend fun searchFoods(searchQuery: String) = flow {
         try {
             val response = apiService.searchQuery(searchQuery = searchQuery)
             when (response.code()) {
@@ -200,11 +204,12 @@ class HomeRepository @Inject constructor(private val apiService: ApiService) {
                 }
 
             }
-        }catch (e:UnknownHostException){
-            throw UnknownHostException("Internet ERROR")
-        }
-        catch (e:Exception){
-            throw Exception(e.message)
+        } catch (_: UnknownHostException) {
+        } catch (e: Exception) {
+            if (e.message.toString() == "null")
+                throw Exception("Empty list")
+            else
+                throw Exception(e.message.toString())
         }
     }
 
