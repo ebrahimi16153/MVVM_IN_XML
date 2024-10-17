@@ -1,6 +1,7 @@
 package com.github.ebrahimi16153.mvvminxml.data.repository
 
 import com.github.ebrahimi16153.mvvminxml.data.local.FoodDao
+import com.github.ebrahimi16153.mvvminxml.data.model.FoodList
 import com.github.ebrahimi16153.mvvminxml.data.remote.ApiService
 import kotlinx.coroutines.flow.flow
 import java.net.UnknownHostException
@@ -44,6 +45,16 @@ class DetailRepository @Inject constructor(
             throw e
         }
     }
+
+    //DB
+    //add FavMeals
+    suspend fun addFav(meal: FoodList.Meal) = foodDao.addMeal(meal)
+
+    //remove Fav
+    suspend fun deleteFav(meal: FoodList.Meal) = foodDao.deleteMeal(meal)
+
+    //isFave
+    suspend fun isFav(mealID:String) = foodDao.foodExists(id = mealID)
 
 
 }

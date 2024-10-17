@@ -22,8 +22,8 @@ fun Spinner.setUpSpinner(list: MutableList<out Any>, callback: (String) -> Unit)
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
+            callback("A")
         }
-
     }
 
 

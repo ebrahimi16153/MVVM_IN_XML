@@ -17,14 +17,12 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(private val detailRepository: DetailRepository):ViewModel() {
 
     val detailFood = MutableLiveData<Wrapper<FoodList.Meal>>(Wrapper.Loading)
+    val isFav = MutableLiveData<Boolean>(false)
 
     fun detailFood (foodID:String) =  viewModelScope.launch {
         try {
             detailRepository.getFoodByID(foodID).collectLatest { itFood ->
-
-
                 detailFood.postValue(Wrapper.Success(data = itFood))
-
             }
         }catch (e:UnknownHostException){
             Wrapper.Error(message = e.message.toString())
@@ -34,6 +32,16 @@ class DetailViewModel @Inject constructor(private val detailRepository: DetailRe
 
 
     }
+
+    fun addFav(meal: FoodList.Meal) = viewModelScope.launch {
+        detailRepository.addFav(meal)
+    }
+
+    fun deleteFav(meal: FoodList.Meal) = viewModelScope.launch {
+        detailRepository.deleteFav(meal)
+    }
+
+    fun isFav(mealId:String) = viewModelScope.launch { detailRepository.isFav(mealId).collectLatest { isFav.postValue(it) } }
 
 
 

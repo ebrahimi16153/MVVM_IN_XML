@@ -44,11 +44,7 @@ class MainActivity : AppCompatActivity() {
             // fill bottomNav
             bottomNav.setupWithNavController(navController)
 
-            // hide bottomNav in detailScreen
-            navController.addOnDestinationChangedListener { _, destination, _ ->
 
-                if (destination.id == R.id.detailFragment) binding?.bottomNav?.isVisible = false
-            }
 
 
 
@@ -90,6 +86,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }
+
+
+            // hide bottomNav in detailScreen
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+
+                if (destination.id == R.id.detailFragment) binding?.bottomNav?.isVisible = false else binding?.bottomNav?.isVisible = true
+            }
+
         }
     }
 

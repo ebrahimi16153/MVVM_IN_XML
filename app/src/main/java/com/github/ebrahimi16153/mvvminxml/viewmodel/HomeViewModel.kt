@@ -19,19 +19,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
-, private val network: CheckNetworkImpl) : ViewModel() {
+    private val homeRepository: HomeRepository) : ViewModel() {
 
 
     val randomFood = MutableLiveData<Wrapper<FoodList.Meal?>>(Wrapper.Loading)
     val categories = MutableLiveData<Wrapper<MutableList<Categories.Category>>>(Wrapper.Loading)
     val foods = MutableLiveData<Wrapper<MutableList<FoodList.Meal>>>(Wrapper.Loading)
     val errorStatus = MutableLiveData<Boolean>()
-
-
-
-
-
 
 
     fun getRandomFood() = viewModelScope.launch {

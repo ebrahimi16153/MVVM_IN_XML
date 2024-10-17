@@ -1,4 +1,4 @@
-package com.github.ebrahimi16153.foodapp.ui.home.adapter
+package com.github.ebrahimi16153.mvvminxml.data.adapter
 
 import android.view.LayoutInflater
 import android.view.View

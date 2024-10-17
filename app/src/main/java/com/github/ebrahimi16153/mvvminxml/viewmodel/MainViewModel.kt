@@ -18,13 +18,11 @@ class MainViewModel @Inject constructor(private val network: CheckNetworkImpl):V
         checkNetwork()
     }
 
-    val networkStatus = MutableLiveData<CheckNetwork.Status>(CheckNetwork.Status.Unavailable)
+    val networkStatus = MutableLiveData(CheckNetwork.Status.Unavailable)
 
     private fun checkNetwork() = viewModelScope.launch {
         network.observe().collectLatest { itStatus ->
-
             networkStatus.postValue(itStatus)
-
         }
     }
 }

@@ -11,19 +11,15 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
-import com.github.ebrahimi16153.foodapp.ui.home.adapter.FoodAdapter
+import com.github.ebrahimi16153.mvvminxml.data.adapter.FoodAdapter
 import com.github.ebrahimi16153.mvvminxml.R
 import com.github.ebrahimi16153.mvvminxml.data.adapter.CategoryAdapter
 import com.github.ebrahimi16153.mvvminxml.databinding.FragmentHomeBinding
 import com.github.ebrahimi16153.mvvminxml.util.Wrapper
-import com.github.ebrahimi16153.mvvminxml.util.connection.CheckNetwork
-import com.github.ebrahimi16153.mvvminxml.util.connection.CheckNetworkImpl
 import com.github.ebrahimi16153.mvvminxml.util.setUpRecycler
 import com.github.ebrahimi16153.mvvminxml.util.setUpSpinner
 import com.github.ebrahimi16153.mvvminxml.viewmodel.HomeViewModel
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 
@@ -45,13 +41,14 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var foodAdapter: FoodAdapter
 
-    private var errorMessage:String? = null
+    private var errorMessage: String? = null
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(layoutInflater)
 
@@ -68,6 +65,7 @@ class HomeFragment : Fragment() {
         ////////////////////////////call API//////////////////
         homeViewModel.getRandomFood()
         homeViewModel.getCategory()
+        homeViewModel.getFoodByFirstLetter("A")
 
         binding?.apply {
 
@@ -78,6 +76,7 @@ class HomeFragment : Fragment() {
                     is Wrapper.Error -> {
                         errorMessage = itFood.message
                     }
+
                     Wrapper.Idle -> {}
                     Wrapper.Loading -> {
                         foodsLoading.isVisible = true
@@ -157,6 +156,7 @@ class HomeFragment : Fragment() {
                     is Wrapper.Error -> {
                         errorMessage = itFoods.message
                     }
+
                     Wrapper.Idle -> {}
                     Wrapper.Loading -> {
                         foodsLoading.isVisible = true
@@ -194,18 +194,20 @@ class HomeFragment : Fragment() {
             }
 
             //Error
-
-
-            homeViewModel.errorStatus.observe(viewLifecycleOwner){
-                if (homeViewModel.foods.value is Wrapper.Error || homeViewModel.randomFood.value is Wrapper.Error || homeViewModel.categories.value is Wrapper.Error ){
+            homeViewModel.errorStatus.observe(viewLifecycleOwner) {
+                if (homeViewModel.foods.value is Wrapper.Error || homeViewModel.randomFood.value is Wrapper.Error || homeViewModel.categories.value is Wrapper.Error) {
 
 
                     homeContent.isVisible = false
                     disconnected.disconnectedIcon.setImageResource(R.drawable.error)
                     disconnected.disconnectedText.text = errorMessage
+                    disconnected.refreshBtn.isVisible = true
+                    disconnected.refreshBtn.setOnClickListener {
+                        homeViewModel.getFoodByFirstLetter("A")
+                    }
                     disconnectedLay.isVisible = true
 
-                }else{
+                } else {
 
                     disconnectedLay.isVisible = false
                     homeContent.isVisible = true

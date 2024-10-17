@@ -31,6 +31,6 @@ interface FoodDao {
 
 
     @Query("SELECT EXISTS (SELECT 1 FROM $FOOD_TABLE WHERE idMeal =:id)")
-    fun foodExists(id: Int): Flow<Boolean>
+    fun foodExists(id: String): Flow<Boolean>
 
 }
