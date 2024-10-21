@@ -60,12 +60,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val letters = listOf('A'..'Z').flatten().toMutableList()
+        letters.add(0,'_')
 
-
-        ////////////////////////////call API//////////////////
-        homeViewModel.getRandomFood()
-        homeViewModel.getCategory()
-        homeViewModel.getFoodByFirstLetter("A")
 
         binding?.apply {
 
@@ -96,7 +92,9 @@ class HomeFragment : Fragment() {
 
             //////////////////////////////////search//////////////////////////////////////
             searchEdt.addTextChangedListener { itText ->
-                homeViewModel.searchFoods(itText.toString())
+               if (!itText.isNullOrEmpty()){
+                   homeViewModel.searchFoods(itText.toString())
+               }
             }
 
 

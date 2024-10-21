@@ -23,9 +23,12 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
         return ViewHolder()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindViews(listOfCategory[position])
-        holder.setIsRecyclable(false)
     }
 
     override fun getItemCount(): Int = listOfCategory.size

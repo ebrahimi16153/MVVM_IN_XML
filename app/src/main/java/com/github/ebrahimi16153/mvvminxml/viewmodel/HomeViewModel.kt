@@ -21,6 +21,11 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository) : ViewModel() {
 
+        init {
+            getRandomFood()
+            getCategory()
+            getFoodByFirstLetter("A")
+        }
 
     val randomFood = MutableLiveData<Wrapper<FoodList.Meal?>>(Wrapper.Loading)
     val categories = MutableLiveData<Wrapper<MutableList<Categories.Category>>>(Wrapper.Loading)

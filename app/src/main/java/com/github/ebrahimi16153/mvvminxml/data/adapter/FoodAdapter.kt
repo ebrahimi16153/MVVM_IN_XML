@@ -21,10 +21,17 @@ class FoodAdapter @Inject constructor() : RecyclerView.Adapter<FoodAdapter.ViewH
         return ViewHolder()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindViews(listOfFoods[position])
         holder.setIsRecyclable(false)
     }
+
+
+
 
     override fun getItemCount(): Int = listOfFoods.size
 

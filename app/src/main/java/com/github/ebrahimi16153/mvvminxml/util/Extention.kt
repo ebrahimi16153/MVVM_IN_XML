@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ebrahimi16153.mvvminxml.R
 
@@ -17,13 +18,11 @@ fun Spinner.setUpSpinner(list: MutableList<out Any>, callback: (String) -> Unit)
     this.adapter = adapter
 
     this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            callback(list[position].toString())
-        }
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-            callback("A")
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            if (position>0) callback(list[position].toString())
         }
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 
 
